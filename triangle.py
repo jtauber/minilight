@@ -2,35 +2,30 @@
 #
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
+#  
+#  Copyright (c) 2009, James Tauber.
 
 
 from math import sqrt
 from random import random
 from vector3f import Vector3f, ZERO, ONE, MAX
 
-import re
-SEARCH = re.compile('(\(.+\))\s*(\(.+\))\s*(\(.+\))\s*(\(.+\))\s*(\(.+\))').search
 
 TOLERANCE = 1.0 / 1024.0
 
 class Triangle(object):
 
-    def __init__(self, in_stream):
-        for line in in_stream:
-            if not line.isspace():
-                v0, v1, v2, r, e = SEARCH(line).groups()
-                self.vertexs = map(Vector3f, [v0, v1, v2])
-                self.edge0 = Vector3f(v1) - Vector3f(v0)
-                self.edge3 = Vector3f(v2) - Vector3f(v0)
-                self.reflectivity = Vector3f(r).clamped(ZERO, ONE)
-                self.emitivity = Vector3f(e).clamped(ZERO, MAX)
-                edge1 = Vector3f(v2) - Vector3f(v1)
-                self.tangent = self.edge0.unitize()
-                self.normal = self.tangent.cross(edge1).unitize()
-                pa2 = self.edge0.cross(edge1)
-                self.area = sqrt(pa2.dot(pa2)) * 0.5
-                return
-        raise StopIteration
+    def __init__(self, v0, v1, v2, r, e):
+        self.vertexs = map(Vector3f, [v0, v1, v2])
+        self.edge0 = Vector3f(v1) - Vector3f(v0)
+        self.edge3 = Vector3f(v2) - Vector3f(v0)
+        self.reflectivity = Vector3f(r).clamped(ZERO, ONE)
+        self.emitivity = Vector3f(e).clamped(ZERO, MAX)
+        edge1 = Vector3f(v2) - Vector3f(v1)
+        self.tangent = self.edge0.unitize()
+        self.normal = self.tangent.cross(edge1).unitize()
+        pa2 = self.edge0.cross(edge1)
+        self.area = sqrt(pa2.dot(pa2)) * 0.5
 
     def get_bound(self):
         v2 = self.vertexs[2]
