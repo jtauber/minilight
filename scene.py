@@ -31,7 +31,7 @@ class Scene(object):
         
         self.index = SpatialIndex(eye_position, triangles)
         
-        print "built spatial index"
+        print "built spatial index (%d deep)" % self.index.deepest_level
         
         self.get_intersection = self.index.get_intersection
     
