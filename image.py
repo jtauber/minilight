@@ -26,7 +26,7 @@ class Image(object):
     def add_to_pixel(self, x, y, radiance):
         if x >= 0 and x < self.width and y >= 0 and y < self.height:
             index = x + ((self.height - 1 - y) * self.width)
-            self.pixels[index] += array(list(radiance))
+            self.pixels[index] += radiance
     
     def write_ppm(self, out, iteration):
         

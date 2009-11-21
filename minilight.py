@@ -13,7 +13,7 @@ from camera import Camera
 from image import Image
 from scene import Scene
 
-from parser import parse_image_dimensions
+from parser import parse_image_dimensions, parse_camera_description
 
 from math import log10
 from sys import argv, stdout
@@ -87,7 +87,8 @@ if __name__ == '__main__':
                 break
         width, height = parse_image_dimensions(model_file)
         image = Image(width, height)
-        camera = Camera(model_file)
+        position, direction, angle = parse_camera_description(model_file)
+        camera = Camera(position, direction, angle)
         scene = Scene(model_file, camera.view_position)
         model_file.close()
         last_time = time() - (SAVE_PERIOD + 1)
