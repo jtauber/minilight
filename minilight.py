@@ -114,5 +114,6 @@ if __name__ == "__main__":
                 stdout.flush()
             print "\nfinished"
         except KeyboardInterrupt:
-            save_image(image_file_pathname, image, frame_no)
-            print "\ninterupted"
+            print "\ninterupted; saving..."
+            image.save(image_file_pathname, frame_no)
+            print "saved"
