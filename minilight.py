@@ -2,6 +2,8 @@
 #
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
+#  
+#  Copyright (c) 2009, James Tauber.
 
 
 #import psyco
@@ -10,6 +12,8 @@
 from camera import Camera
 from image import Image
 from scene import Scene
+
+from parser import parse_image_dimensions
 
 from math import log10
 from sys import argv, stdout
@@ -66,10 +70,6 @@ with a newline. Eg.:
 MODEL_FORMAT_ID = '#MiniLight'
 SAVE_PERIOD = 180
 
-def save_image(image_file_pathname, image, frame_no):
-    image_file = open(image_file_pathname, 'wb')
-    image.get_formatted(image_file, frame_no - 1)
-    image_file.close()
 
 if __name__ == '__main__':
     if len(argv) < 2 or argv[1] == '-?' or argv[1] == '--help':
@@ -85,7 +85,8 @@ if __name__ == '__main__':
             if not line.isspace():
                 iterations = int(line)
                 break
-        image = Image(model_file)
+        width, height = parse_image_dimensions(model_file)
+        image = Image(width, height)
         camera = Camera(model_file)
         scene = Scene(model_file, camera.view_position)
         model_file.close()
@@ -95,7 +96,7 @@ if __name__ == '__main__':
                 camera.get_frame(scene, image)
                 if SAVE_PERIOD < time() - last_time or frame_no == iterations:
                     last_time = time()
-                    save_image(image_file_pathname, image, frame_no)
+                    image.save(image_file_pathname, frame_no - 1)
                 stdout.write('\b' * ((int(log10(frame_no - 1)) if frame_no > 1 else -1) + 12) + 'iteration: %u' % frame_no)
                 stdout.flush()
             print '\nfinished'
