@@ -13,6 +13,7 @@ from bound import Bound
 MAX_LEVELS = 44
 MAX_ITEMS  =  8
 
+MAX_FLOAT = float(2**1024 - 2**971)
 
 class SpatialIndex(object):
 
@@ -115,7 +116,7 @@ class SpatialNode(object):
                     if hit_object:
                         break
                 
-                step = float(2**1024 - 2**971)
+                step = MAX_FLOAT
                 axis = 0
                 
                 for i in range(3):
@@ -143,7 +144,7 @@ class SpatialNode(object):
                 cell_position = ray_origin + ray_direction * step
                 sub_cell = sub_cell ^ (1 << axis)
         else:
-            nearest_distance = float(2**1024 - 2**971)
+            nearest_distance = MAX_FLOAT
             
             for item in self.items:
                 if item != last_hit:
