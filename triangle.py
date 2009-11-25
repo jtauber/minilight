@@ -48,31 +48,49 @@ class Triangle(object):
         return bound
 
     def get_intersection(self, ray_origin, ray_direction):
-        e1x = self.edge0.x; e1y = self.edge0.y; e1z = self.edge0.z
-        e2x = self.edge3.x; e2y = self.edge3.y; e2z = self.edge3.z
+        e1x = self.edge0.x
+        e1y = self.edge0.y
+        e1z = self.edge0.z
+        
+        e2x = self.edge3.x
+        e2y = self.edge3.y
+        e2z = self.edge3.z
+        
         pvx = ray_direction.y * e2z - ray_direction.z * e2y
         pvy = ray_direction.z * e2x - ray_direction.x * e2z
         pvz = ray_direction.x * e2y - ray_direction.y * e2x
+        
         det = e1x * pvx + e1y * pvy + e1z * pvz
+        
         if -0.000001 < det < 0.000001:
             return None
+        
         inv_det = 1.0 / det
         v0 = self.vertexs[0]
         tvx = ray_origin.x - v0.x
+        
         tvy = ray_origin.y - v0.y
         tvz = ray_origin.z - v0.z
+        
         u = (tvx * pvx + tvy * pvy + tvz * pvz) * inv_det
+        
         if u < 0.0 or u > 1.0:
             return None
+        
         qvx = tvy * e1z - tvz * e1y
         qvy = tvz * e1x - tvx * e1z
         qvz = tvx * e1y - tvy * e1x
+        
         v = (ray_direction.x * qvx + ray_direction.y * qvy + ray_direction.z * qvz) * inv_det
+        
         if v < 0.0 or u + v > 1.0:
             return None
+        
         t = (e2x * qvx + e2y * qvy + e2z * qvz) * inv_det
+        
         if t < 0.0:
             return None
+        
         return t
 
     def get_sample_point(self):
