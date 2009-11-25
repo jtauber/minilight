@@ -17,7 +17,6 @@ from parser import *
 
 from math import log10
 from sys import argv, stdout
-from time import time
 
 BANNER = """
   MiniLight 1.5.2 Python
@@ -72,7 +71,6 @@ with a newline. Eg.:
 """
 
 MODEL_FORMAT_ID = "#MiniLight"
-SAVE_PERIOD = 180
 
 
 if __name__ == "__main__":
@@ -102,18 +100,10 @@ if __name__ == "__main__":
         
         model_file.close()
         
-        last_time = time() - (SAVE_PERIOD + 1)
+        for frame_no in range(1, iterations + 1):
+            camera.get_frame(scene, image)
+            stdout.write("\b" * ((int(log10(frame_no - 1)) if frame_no > 1 else -1) + 12) + "iteration: %u" % frame_no)
+            stdout.flush()
         
-        try:
-            for frame_no in range(1, iterations + 1):
-                camera.get_frame(scene, image)
-                if SAVE_PERIOD < time() - last_time or frame_no == iterations:
-                    last_time = time()
-                    image.save(image_file_pathname, frame_no - 1)
-                stdout.write("\b" * ((int(log10(frame_no - 1)) if frame_no > 1 else -1) + 12) + "iteration: %u" % frame_no)
-                stdout.flush()
-            print "\nfinished"
-        except KeyboardInterrupt:
-            print "\ninterupted; saving..."
-            image.save(image_file_pathname, frame_no)
-            print "saved"
+        image.save(image_file_pathname, frame_no)
+        print "\nfinished"
