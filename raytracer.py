@@ -20,7 +20,7 @@ class RayTracer(object):
     
     def get_radiance(self, ray_origin, ray_direction, last_hit=None):
         
-        hit_object, hit_position = self.scene.get_intersection(ray_origin, ray_direction, last_hit)
+        hit_object, hit_position = self.scene.get_intersection(ray_origin, ray_direction)
         
         if hit_object:
             surface_point = SurfacePoint(hit_object, hit_position)
@@ -49,7 +49,7 @@ class RayTracer(object):
         
         if emitter:
             emit_direction = (emitter_position - surface_point.position).unitize()
-            hit_object, hit_position = self.scene.get_intersection(surface_point.position, emit_direction, surface_point.triangle)
+            hit_object, hit_position = self.scene.get_intersection(surface_point.position, emit_direction)
             
             if not hit_object or emitter == hit_object:
                 emission_in = SurfacePoint(emitter, emitter_position).get_emission(surface_point.position, -emit_direction, True)
