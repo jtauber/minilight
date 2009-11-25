@@ -153,11 +153,9 @@ class SpatialNode(object):
                     if distance and (distance < nearest_distance):
                         hit = ray_origin + ray_direction * distance
                         
-                        if (self.bound.lower[0] - hit[0] <= TOLERANCE) and (hit[0] - self.bound.upper[0] <= TOLERANCE) and \
-                           (self.bound.lower[1] - hit[1] <= TOLERANCE) and (hit[1] - self.bound.upper[1] <= TOLERANCE) and \
-                           (self.bound.lower[2] - hit[2] <= TOLERANCE) and (hit[2] - self.bound.upper[2] <= TOLERANCE):
-                               hit_object = item
-                               hit_position = hit
-                               nearest_distance = distance
+                        if self.bound.within(hit, TOLERANCE):
+                           hit_object = item
+                           hit_position = hit
+                           nearest_distance = distance
         
         return hit_object, hit_position
