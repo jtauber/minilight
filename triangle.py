@@ -36,7 +36,7 @@ class Triangle(object):
     def get_bound(self):
         
         v2 = self.vertexs[2]
-        bound = [v2.x, v2.y, v2.z, v2.x, v2.y, v2.z]
+        bound = [[v2.x, v2.y, v2.z], [v2.x, v2.y, v2.z]]
         
         for j in range(3):
             
@@ -44,18 +44,18 @@ class Triangle(object):
             v1 = self.vertexs[1][j]
             
             if v0 < v1:
-                if v0 < bound[j]:
-                    bound[j] = v0
-                if v1 > bound[j + 3]:
-                    bound[j + 3] = v1
+                if v0 < bound[0][j]:
+                    bound[0][j] = v0
+                if v1 > bound[1][j]:
+                    bound[1][j] = v1
             else:
-                if v1 < bound[j]:
-                    bound[j] = v1
-                if v0 > bound[j + 3]:
-                    bound[j + 3] = v0
+                if v1 < bound[0][j]:
+                    bound[0][j] = v1
+                if v0 > bound[1][j]:
+                    bound[1][j] = v0
             
-            bound[j] -= (abs(bound[j]) + 1.0) * TOLERANCE
-            bound[j + 3] += (abs(bound[j + 3]) + 1.0) * TOLERANCE
+            bound[0][j] -= (abs(bound[0][j]) + 1.0) * TOLERANCE
+            bound[1][j] += (abs(bound[1][j]) + 1.0) * TOLERANCE
         
         return bound
     
