@@ -16,7 +16,7 @@ class SurfacePoint(object):
     
     def __init__(self, triangle, position):
         
-        self.triangle_ref = triangle
+        self.triangle = triangle
         self.position = Vector3f(position)
     
     
@@ -24,7 +24,7 @@ class SurfacePoint(object):
         
         ray = to_position - self.position
         distance2 = ray.dot(ray)
-        cos_area = out_direction.dot(self.triangle_ref.normal) * self.triangle_ref.area
+        cos_area = out_direction.dot(self.triangle.normal) * self.triangle.area
         
         if is_solid_angle:
             solid_angle = cos_area / max(distance2, 1e-6)
@@ -32,28 +32,28 @@ class SurfacePoint(object):
             solid_angle = 1.0
         
         if cos_area > 0.0:
-            return self.triangle_ref.emitivity * solid_angle 
+            return self.triangle.emitivity * solid_angle 
         else:
             return ZERO
     
     
     def get_reflection(self, in_direction, in_radiance, out_direction):
         
-        in_dot = in_direction.dot(self.triangle_ref.normal)
-        out_dot = out_direction.dot(self.triangle_ref.normal)
+        in_dot = in_direction.dot(self.triangle.normal)
+        out_dot = out_direction.dot(self.triangle.normal)
         
         if (in_dot < 0.0) ^ (out_dot < 0.0):
             return ZERO
         else:
-            return in_radiance * self.triangle_ref.reflectivity * (abs(in_dot) / pi)
+            return in_radiance * self.triangle.reflectivity * (abs(in_dot) / pi)
     
     
     def get_next_direction(self, in_direction):
         
-        reflectivity_mean = self.triangle_ref.reflectivity.dot(ONE) / 3.0
+        reflectivity_mean = self.triangle.reflectivity.dot(ONE) / 3.0
         
         if random() < reflectivity_mean:
-            color = self.triangle_ref.reflectivity * (1.0 / reflectivity_mean)
+            color = self.triangle.reflectivity * (1.0 / reflectivity_mean)
             _2pr1 = pi * 2.0 * random()
             sr2 = sqrt(random())
             
@@ -61,8 +61,8 @@ class SurfacePoint(object):
             y = (sin(_2pr1) * sr2)
             z = sqrt(1.0 - (sr2 * sr2))
             
-            normal = self.triangle_ref.normal
-            tangent = self.triangle_ref.tangent
+            normal = self.triangle.normal
+            tangent = self.triangle.tangent
             
             if normal.dot(in_direction) < 0.0:
                 normal = -normal
