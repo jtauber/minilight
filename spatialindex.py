@@ -24,8 +24,7 @@ class SpatialIndex(object):
         item_bounds = []
         
         for item in items:
-            b = item.get_bound()
-            item_bound = Bound(b[0], b[1])
+            item_bound = item.get_bound()
             item_bounds.append((item, item_bound))
             bound.expand_to_fit(item_bound)
         

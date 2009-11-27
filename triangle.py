@@ -9,7 +9,7 @@
 from math import sqrt
 from random import random
 from vector3f import Vector3f, ZERO, ONE, MAX
-
+from bound import Bound
 
 TOLERANCE = 1.0 / 1024.0
 
@@ -36,7 +36,8 @@ class Triangle(object):
     def get_bound(self):
         
         v2 = self.vertexs[2]
-        bound = [[v2.x, v2.y, v2.z], [v2.x, v2.y, v2.z]]
+        
+        bound = Bound(list(v2), list(v2))
         
         for j in range(3):
             
@@ -44,18 +45,18 @@ class Triangle(object):
             v1 = self.vertexs[1][j]
             
             if v0 < v1:
-                if v0 < bound[0][j]:
-                    bound[0][j] = v0
-                if v1 > bound[1][j]:
-                    bound[1][j] = v1
+                if v0 < bound.lower[j]:
+                    bound.lower[j] = v0
+                if v1 > bound.upper[j]:
+                    bound.upper[j] = v1
             else:
-                if v1 < bound[0][j]:
-                    bound[0][j] = v1
-                if v0 > bound[1][j]:
-                    bound[1][j] = v0
+                if v1 < bound.lower[j]:
+                    bound.lower[j] = v1
+                if v0 > bound.upper[j]:
+                    bound.upper[j] = v0
             
-            bound[0][j] -= (abs(bound[0][j]) + 1.0) * TOLERANCE
-            bound[1][j] += (abs(bound[1][j]) + 1.0) * TOLERANCE
+            bound.lower[j] -= (abs(bound.lower[j]) + 1.0) * TOLERANCE
+            bound.upper[j] += (abs(bound.upper[j]) + 1.0) * TOLERANCE
         
         return bound
     
