@@ -1,6 +1,8 @@
 This is a global illumination renderer in Python.
 
-Original C version by Harrion Ainsworth
+Original C version by Harrison Ainsworth
+http://www.hxa.name/minilight/
+
 Original Python port by Juraj Sukop
 
 I am taking apart the code and putting it back together mostly to understand
@@ -16,6 +18,9 @@ it better and possibly add new features but I have other goals such as:
 See branches 'no-spatialindex', 'no-autosave', and 'simple-mainline' for
 some simplications. See branch 'use-arrays' for an attempt (currently much
 slower than original) to use numpy arrays rather than Vector3f class.
+
+NOTE: I frequently rebase to keep the branching structure thematic rather than
+historical. You have been warned.
 
 James Tauber
 jtauber@jtauber.com
