@@ -68,4 +68,4 @@ class Camera(object):
                 
                 # and add to image
                 
-                image.add_to_pixel(x, y, radiance)
+                image.add_radiance(x, y, radiance)
