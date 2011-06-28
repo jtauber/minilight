@@ -12,8 +12,8 @@ from math import sqrt
 class Vector3f(object):
     
     def __init__(self, *args):
-        if len(args) == 1 and type(args[0]) == type(''):
-            self.x, self.y, self.z = map(float, args[0].lstrip(' (').rstrip(') ').split())
+        if len(args) == 1 and type(args[0]) == type(""):
+            self.x, self.y, self.z = map(float, args[0].lstrip(" (").rstrip(") ").split())
         elif type(args[0]) == Vector3f:
             self.x, self.y, self.z = args[0].x, args[0].y, args[0].z
         else:
