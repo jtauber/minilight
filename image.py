@@ -36,7 +36,9 @@ class Image(object):
         self.data = array("d", [0]) * (width * height * 3)
     
     def _index(self, t):
-        index = t[1] * self.width * 3 + t[0] * 3 + t[2]
+        x, y, channel = t
+        index = (x + ((self.height - 1 - y) * self.width)) * 3 + channel
+        
         return min(max(index, 0), len(self.data) - 1)
     
     def __getitem__(self, t):
