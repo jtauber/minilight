@@ -3,17 +3,18 @@
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
 #  
-#  Copyright (c) 2009-2010, James Tauber.
+#  Copyright (c) 2009-2011, James Tauber.
 
 
+from array import array
 from math import log10
-from numpy import zeros, array
+
 
 PPM_ID = "P6"
 MINILIGHT_URI = "http://www.hxa7241.org/minilight/"
 
 # how much each channel contributes to luminance
-RGB_LUMINANCE = array([0.2126, 0.7152, 0.0722])
+RGB_LUMINANCE = (0.2126, 0.7152, 0.0722)
 
 DISPLAY_LUMINANCE_MAX = 200.0
 
@@ -32,26 +33,65 @@ class Image(object):
         """
         self.width = width
         self.height = height
-        self.pixels = zeros((width * height, 3))
+        self.data = array("d", [0]) * (width * height * 3)
+    
+    def _index(self, t):
+        index = t[1] * self.width * 3 + t[0] * 3 + t[2]
+        return min(max(index, 0), len(self.data) - 1)
+    
+    def __getitem__(self, t):
+        return self.data[self._index(t)]
+    
+    def __setitem__(self, t, val):
+        self.data[self._index(t)] = val
     
     def add_radiance(self, x, y, radiance):
         """
-        add radiance (an RGB numpy array) to given x, y position on image.
+        add radiance (an RGB tuple) to given x, y position on image.
         """
-        if x >= 0 and x < self.width and y >= 0 and y < self.height:
-            index = x + ((self.height - 1 - y) * self.width)
-            self.pixels[index] += radiance
+        self[x, y, 0] += radiance[0]
+        self[x, y, 1] += radiance[1]
+        self[x, y, 2] += radiance[2]
+    
+    def calculate_scalefactor(self, iterations):
+        """
+        calculate the linear tone-mapping scalefactor for this image assuming
+        the given number of iterations.
+        """
+        ## calculate the log-mean luminance of the image
+        
+        sum_of_logs = 0.0
+        
+        for x in range(self.width):
+            for y in range(self.height):
+                lum = self[x, y, 0] * RGB_LUMINANCE[0]
+                lum += self[x, y, 1] * RGB_LUMINANCE[1]
+                lum += self[x, y, 2] * RGB_LUMINANCE[2]
+                lum /= iterations
+                
+                sum_of_logs += log10(max(lum, 0.0001))
+                
+        log_mean_luminance = 10.0 ** (sum_of_logs / (self.height * self.width))
+        
+        ## calculate the scalefactor for linear tone-mapping
+        
+        # formula from Ward "A Contrast-Based Scalefactor for Luminance Display"
+        
+        scalefactor = (
+            (SCALEFACTOR_NUMERATOR / (1.219 + log_mean_luminance ** 0.4)) ** 2.5
+        ) / DISPLAY_LUMINANCE_MAX
+        
+        return scalefactor
     
     def display_pixels(self, iterations):
         """
         iterate over each channel of each pixel in image returning
         gamma-corrected number scaled 0 - 1 (although not clipped to 1).
         """
-        scalefactor = calculate_scalefactor(self.pixels, iterations)
+        scalefactor = self.calculate_scalefactor(iterations)
         
-        for pixel in self.pixels:
-            for channel in pixel:
-                yield max(channel * scalefactor / iterations, 0) ** GAMMA_ENCODE
+        for value in self.data:
+            yield max(value * scalefactor / iterations, 0) ** GAMMA_ENCODE
     
     def save(self, filename, iterations):
         """
@@ -59,37 +99,9 @@ class Image(object):
         of iterations.
         """
         
-        f = open(filename, "wb")
-        f.write("%s\n# %s\n\n%u %u\n255\n" % (
-            PPM_ID, MINILIGHT_URI, self.width, self.height))
-        
-        for c in self.display_pixels(iterations):
-            f.write(chr(min(int((c * 255.0) + 0.5), 255)))
-        f.close()
-
-
-def calculate_scalefactor(pixels, iterations):
-    """
-    calculate the linear tone-mapping scalefactor for the given array
-    of pixels assuming the given number of iterations.
-    """
-    ## calculate the log-mean luminance of the image
-    
-    sum_of_logs = 0.0
-    
-    for pixel in pixels:
-        # pixel and RGB_LUMINANCE are vectors so this is a dot product
-        y = sum(pixel * RGB_LUMINANCE / iterations)
-        sum_of_logs += log10(max(y, 0.0001))
-    
-    log_mean_luminance = 10.0 ** (sum_of_logs / len(pixels))
-    
-    ## calculate the scalefactor for linear tone-mapping
-    
-    # formula from Ward "A Contrast-Based Scalefactor for Luminance Display"
-    
-    scalefactor = (
-        (SCALEFACTOR_NUMERATOR / (1.219 + log_mean_luminance ** 0.4)) ** 2.5
-    ) / DISPLAY_LUMINANCE_MAX
-    
-    return scalefactor
+        with open(filename, "wb") as f:
+            f.write("%s\n# %s\n\n%u %u\n255\n" % (
+                PPM_ID, MINILIGHT_URI, self.width, self.height))
+            
+            for c in self.display_pixels(iterations):
+                f.write(chr(min(int((c * 255.0) + 0.5), 255)))
