@@ -10,7 +10,7 @@ from camera import Camera
 from image import Image
 from scene import Scene
 
-from parser import *
+from scene_parser import *
 
 from sys import argv
 
