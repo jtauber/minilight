@@ -8,7 +8,7 @@
 
 from random import choice
 
-from spatialindex import SpatialIndex
+from spatialindex import SpatialIndex, NullSpatialIndex
 from triangle import Triangle
 from vector3f import Vector3f, ZERO, ONE, MAX
 
@@ -30,7 +30,7 @@ class Scene(object):
                 
         print "loaded %d triangles (%d emitters)" % (len(triangles), len(self.emitters))
         
-        self.index = SpatialIndex(eye_position, triangles)
+        self.index = NullSpatialIndex(eye_position, triangles)
         print "built spatial index (%d deep)" % self.index.deepest_level
         self.get_intersection = self.index.get_intersection
         
@@ -49,18 +49,3 @@ class Scene(object):
             return self.sky_emission
         else:
             return self.sky_emission * self.ground_reflection
-    
-    # def get_intersection(self, ray_origin, ray_direction):
-    #     hit_object = hit_position = None
-    #     
-    #     nearest_distance = MAX_FLOAT
-    #     
-    #     for triangle in self.triangles:
-    #         distance = triangle.get_intersection(ray_origin, ray_direction)
-    #         
-    #         if distance and (distance < nearest_distance):
-    #             hit_object = triangle
-    #             hit_position = ray_origin + ray_direction * distance
-    #             nearest_distance = distance
-    #     
-    #     return hit_object, hit_position

@@ -15,6 +15,30 @@ MAX_ITEMS  =  8
 
 MAX_FLOAT = float(2**1024 - 2**971)
 
+
+class NullSpatialIndex(object):
+    
+    def __init__(self, eye_position, items):
+        self.triangles = items
+        self.deepest_level = 0
+    
+    def get_intersection(self, ray_origin, ray_direction, last_hit):
+        hit_object = hit_position = None
+        
+        nearest_distance = MAX_FLOAT
+        
+        for triangle in self.triangles:
+            distance = triangle.get_intersection(ray_origin, ray_direction)
+            
+            if distance and (distance < nearest_distance):
+                hit_object = triangle
+                hit_position = ray_origin + ray_direction * distance
+                nearest_distance = distance
+                
+        return hit_object, hit_position
+
+
+
 class SpatialIndex(object):
 
     def __init__(self, eye_position, items):
