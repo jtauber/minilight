@@ -2,8 +2,8 @@
 #
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
-#  
-#  Copyright (c) 2009, James Tauber.
+#
+#  Copyright (c) 2009-2012, James Tauber.
 
 
 from math import cos, pi, sin, sqrt
@@ -13,12 +13,10 @@ from vector3f import Vector3f, ONE, ZERO
 
 class SurfacePoint(object):
     
-    
     def __init__(self, triangle, position):
         
         self.triangle = triangle
         self.position = Vector3f(position)
-    
     
     def get_emission(self, to_position, out_direction, is_solid_angle):
         
@@ -32,10 +30,9 @@ class SurfacePoint(object):
             solid_angle = 1.0
         
         if cos_area > 0.0:
-            return self.triangle.emitivity * solid_angle 
+            return self.triangle.emitivity * solid_angle
         else:
             return ZERO
-    
     
     def get_reflection(self, in_direction, in_radiance, out_direction):
         
@@ -46,7 +43,6 @@ class SurfacePoint(object):
             return ZERO
         else:
             return in_radiance * self.triangle.reflectivity * (abs(in_dot) / pi)
-    
     
     def get_next_direction(self, in_direction):
         

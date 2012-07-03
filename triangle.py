@@ -2,8 +2,8 @@
 #
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
-#  
-#  Copyright (c) 2009, James Tauber.
+#
+#  Copyright (c) 2009-2012, James Tauber.
 
 
 from math import sqrt
@@ -32,7 +32,6 @@ class Triangle(object):
         pa2 = self.edge0.cross(edge1)
         self.area = sqrt(pa2.dot(pa2)) * 0.5
     
-    
     def get_bound(self):
         
         v2 = self.vertexs[2]
@@ -59,7 +58,6 @@ class Triangle(object):
             bound.upper[j] += (abs(bound.upper[j]) + 1.0) * TOLERANCE
         
         return bound
-    
     
     def get_intersection(self, ray_origin, ray_direction):
         
@@ -107,7 +105,6 @@ class Triangle(object):
             return None
         
         return t
-    
     
     def get_sample_point(self):
         

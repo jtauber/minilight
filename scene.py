@@ -2,13 +2,13 @@
 #
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
-#  
-#  Copyright (c) 2009, James Tauber.
+#
+#  Copyright (c) 2009-2012, James Tauber.
 
 
 from random import choice
 
-from spatialindex import SpatialIndex, NullSpatialIndex
+from spatialindex import NullSpatialIndex
 from triangle import Triangle
 from vector3f import Vector3f, ZERO, ONE, MAX
 

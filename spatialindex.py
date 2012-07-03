@@ -2,18 +2,17 @@
 #
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
-#  
-#  Copyright (c) 2009, James Tauber.
+#
+#  Copyright (c) 2009-2012, James Tauber.
 
 
-from triangle import Triangle, TOLERANCE
-from vector3f import Vector3f, MAX
+from triangle import TOLERANCE
 from bound import Bound
 
 MAX_LEVELS = 44
-MAX_ITEMS  =  8
+MAX_ITEMS = 8
 
-MAX_FLOAT = float(2**1024 - 2**971)
+MAX_FLOAT = float(2 ** 1024 - 2 ** 971)
 
 
 class NullSpatialIndex(object):
@@ -36,7 +35,6 @@ class NullSpatialIndex(object):
                 nearest_distance = distance
                 
         return hit_object, hit_position
-
 
 
 class SpatialIndex(object):
@@ -94,7 +92,7 @@ class SpatialNode(object):
                 
                 for item, item_bound in item_bounds:
                     if sub_bound.encloses(item_bound):
-                       sub_item_bounds.append((item, item_bound))
+                        sub_item_bounds.append((item, item_bound))
                 
                 q1 += 1 if len(sub_item_bounds) == len(item_bounds) else 0
                 q2 = (sub_bound.upper[0] - sub_bound.lower[0]) < (TOLERANCE * 4.0)
@@ -111,7 +109,6 @@ class SpatialNode(object):
             
         else:
             self.items = [item for item, item_bound in item_bounds]
-    
     
     def get_intersection(self, ray_origin, ray_direction, last_hit, start):
         
@@ -177,8 +174,8 @@ class SpatialNode(object):
                         hit = ray_origin + ray_direction * distance
                         
                         if self.bound.within(hit, TOLERANCE):
-                           hit_object = item
-                           hit_position = hit
-                           nearest_distance = distance
+                            hit_object = item
+                            hit_position = hit
+                            nearest_distance = distance
         
         return hit_object, hit_position

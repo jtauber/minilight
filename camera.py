@@ -2,8 +2,8 @@
 #
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
-#  
-#  Copyright (c) 2009-2011, James Tauber.
+#
+#  Copyright (c) 2009-2012, James Tauber.
 
 
 from math import pi, tan
@@ -42,8 +42,7 @@ class Camera(object):
             self.right = self.up.cross(self.view_direction).unitize()
         else:
             self.up = self.view_direction.cross(self.right).unitize()
-    
-    
+        
     def get_frame(self, scene, image):
         
         raytracer = RayTracer(scene)

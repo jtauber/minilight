@@ -2,8 +2,8 @@
 #
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
-#  
-#  Copyright (c) 2009, James Tauber.
+#
+#  Copyright (c) 2009-2012, James Tauber.
 
 
 from surfacepoint import SurfacePoint
@@ -12,11 +12,9 @@ from vector3f import ZERO
 
 class RayTracer(object):
     
-    
     def __init__(self, scene):
         
         self.scene = scene
-    
     
     def get_radiance(self, ray_origin, ray_direction, last_hit=None):
         
@@ -41,7 +39,6 @@ class RayTracer(object):
             return reflection + illumination + local_emission
         else:
             return self.scene.get_default_emission(-ray_direction)
-    
     
     def sample_emitters(self, ray_direction, surface_point):
         

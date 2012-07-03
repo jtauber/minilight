@@ -2,8 +2,8 @@
 #
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
-#  
-#  Copyright (c) 2009-2011, James Tauber.
+#
+#  Copyright (c) 2009-2012, James Tauber.
 
 
 from array import array

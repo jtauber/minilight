@@ -2,11 +2,12 @@
 #
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
-#  
-#  Copyright (c) 2009, James Tauber.
+#
+#  Copyright (c) 2009-2012, James Tauber.
 
 
 import re
+
 
 def parse_image_dimensions(in_stream):
     for line in in_stream:
@@ -18,12 +19,14 @@ def parse_image_dimensions(in_stream):
 
 CAMERA = re.compile('(\(.+\))\s*(\(.+\))\s*(\S+)')
 
+
 def parse_camera_description(in_stream):
     for line in in_stream:
         if not line.isspace():
             position, direction, angle = CAMERA.search(line).groups()
             break
     return position, direction, angle
+
 
 def parse_iterations(in_stream):
     for line in in_stream:
@@ -34,6 +37,7 @@ def parse_iterations(in_stream):
 
 SKY_GROUND = re.compile('(\(.+\))\s*(\(.+\))')
 
+
 def parse_sky_ground(in_stream):
     for line in in_stream:
         if not line.isspace():
@@ -43,6 +47,7 @@ def parse_sky_ground(in_stream):
 
 
 TRIANGLE = re.compile('(\(.+\))\s*(\(.+\))\s*(\(.+\))\s*(\(.+\))\s*(\(.+\))')
+
 
 def parse_triangles(in_stream):
     for line in in_stream:

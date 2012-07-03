@@ -12,16 +12,8 @@ it better and possibly add new features but I have other goals such as:
    8th power "Mandelbulb" in particular
  - removing features and adding them back in incrementally to produce a
    tutorial
- - exploring how to optimize with things like PyPy, psyco, numpy, partial C
-   implementation, etc.
-
-See branches 'no-spatialindex', 'no-autosave', and 'simple-mainline' for
-some simplications. See branch 'use-arrays' for an attempt (currently much
-slower than original) to use numpy arrays rather than Vector3f class.
-
-NOTE: I frequently rebase to keep the branching structure thematic rather than
-historical. You have been warned.
+ - exploring how to optimize with things like PyPy
 
 James Tauber
 jtauber@jtauber.com
-November 2009 and June 2011
+November 2009; June 2011; July 2012
