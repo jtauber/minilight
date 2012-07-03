@@ -3,59 +3,107 @@
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
 #  
-#  Copyright (c) 2009, James Tauber.
+#  Copyright (c) 2009-2011, James Tauber.
 
 
+from array import array
 from math import log10
-from numpy import zeros, array
 
-PPM_ID = 'P6'
-MINILIGHT_URI = 'http://www.hxa7241.org/minilight/'
+
+PPM_ID = "P6"
+MINILIGHT_URI = "http://www.hxa7241.org/minilight/"
+
+# how much each channel contributes to luminance
+RGB_LUMINANCE = (0.2126, 0.7152, 0.0722)
+
 DISPLAY_LUMINANCE_MAX = 200.0
-RGB_LUMINANCE = array([0.2126, 0.7152, 0.0722])
+
+# formula from Ward "A Contrast-Based Scalefactor for Luminance Display"
+SCALEFACTOR_NUMERATOR = 1.219 + (DISPLAY_LUMINANCE_MAX * 0.25) ** 0.4
+
+
 GAMMA_ENCODE = 0.45
 
 
 class Image(object):
     
     def __init__(self, width, height):
+        """
+        initialize blank image.
+        """
         self.width = width
         self.height = height
-        self.pixels = zeros((width * height, 3))
+        self.data = array("d", [0]) * (width * height * 3)
     
-    def add_to_pixel(self, x, y, radiance):
-        if x >= 0 and x < self.width and y >= 0 and y < self.height:
-            index = x + ((self.height - 1 - y) * self.width)
-            self.pixels[index] += radiance
-    
-    def write_ppm(self, out, iteration):
+    def _index(self, t):
+        x, y, channel = t
+        index = (x + ((self.height - 1 - y) * self.width)) * 3 + channel
         
-        out.write('%s\n# %s\n\n%u %u\n255\n' % (PPM_ID, MINILIGHT_URI, self.width, self.height))
+        return min(max(index, 0), len(self.data) - 1)
+    
+    def __getitem__(self, t):
+        return self.data[self._index(t)]
+    
+    def __setitem__(self, t, val):
+        self.data[self._index(t)] = val
+    
+    def add_radiance(self, x, y, radiance):
+        """
+        add radiance (an RGB tuple) to given x, y position on image.
+        """
+        self[x, y, 0] += radiance[0]
+        self[x, y, 1] += radiance[1]
+        self[x, y, 2] += radiance[2]
+    
+    def calculate_scalefactor(self, iterations):
+        """
+        calculate the linear tone-mapping scalefactor for this image assuming
+        the given number of iterations.
+        """
+        ## calculate the log-mean luminance of the image
         
-        divider = 1.0 / (max(iteration, 0) + 1)
-        tonemap_scaling = calculate_tone_mapping(self.pixels, divider)
+        sum_of_logs = 0.0
         
-        for pixel in self.pixels:
-            for j in range(3):
-                channel = pixel[j]
-                gammaed = max(channel * divider * tonemap_scaling, 0.0) ** GAMMA_ENCODE
-                out.write(chr(min(int((gammaed * 255.0) + 0.5), 255)))
+        for x in range(self.width):
+            for y in range(self.height):
+                lum = self[x, y, 0] * RGB_LUMINANCE[0]
+                lum += self[x, y, 1] * RGB_LUMINANCE[1]
+                lum += self[x, y, 2] * RGB_LUMINANCE[2]
+                lum /= iterations
+                
+                sum_of_logs += log10(max(lum, 0.0001))
+                
+        log_mean_luminance = 10.0 ** (sum_of_logs / (self.height * self.width))
+        
+        ## calculate the scalefactor for linear tone-mapping
+        
+        # formula from Ward "A Contrast-Based Scalefactor for Luminance Display"
+        
+        scalefactor = (
+            (SCALEFACTOR_NUMERATOR / (1.219 + log_mean_luminance ** 0.4)) ** 2.5
+        ) / DISPLAY_LUMINANCE_MAX
+        
+        return scalefactor
     
-    def save(self, filename, iteration):
-        f = open(filename, 'wb')
-        self.write_ppm(f, iteration)
-        f.close()
-
-
-def calculate_tone_mapping(pixels, divider):
-    sum_of_logs = 0.0
+    def display_pixels(self, iterations):
+        """
+        iterate over each channel of each pixel in image returning
+        gamma-corrected number scaled 0 - 1 (although not clipped to 1).
+        """
+        scalefactor = self.calculate_scalefactor(iterations)
+        
+        for value in self.data:
+            yield max(value * scalefactor / iterations, 0) ** GAMMA_ENCODE
     
-    for pixel in pixels:
-        y = sum(divider * pixel * RGB_LUMINANCE) # pixel and RGB_LUMINANCE are vectors so this is a dot product
-        sum_of_logs += log10(max(y, 0.0001))
-    
-    log_mean_luminance = 10.0 ** (sum_of_logs / len(pixels))
-    a = 1.219 + (DISPLAY_LUMINANCE_MAX * 0.25) ** 0.4
-    b = 1.219 + log_mean_luminance ** 0.4
-    
-    return ((a / b) ** 2.5) / DISPLAY_LUMINANCE_MAX
+    def save(self, filename, iterations):
+        """
+        save the image to given filename assuming the given number
+        of iterations.
+        """
+        
+        with open(filename, "wb") as f:
+            f.write("%s\n# %s\n\n%u %u\n255\n" % (
+                PPM_ID, MINILIGHT_URI, self.width, self.height))
+            
+            for c in self.display_pixels(iterations):
+                f.write(chr(min(int((c * 255.0) + 0.5), 255)))

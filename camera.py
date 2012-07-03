@@ -3,10 +3,8 @@
 #  Copyright (c) 2007-2008, Harrison Ainsworth / HXA7241 and Juraj Sukop.
 #  http://www.hxa7241.org/
 #  
-#  Copyright (c) 2009, James Tauber.
+#  Copyright (c) 2009-2011, James Tauber.
 
-
-from numpy import array
 
 from math import pi, tan
 from random import random
@@ -64,8 +62,8 @@ class Camera(object):
                 
                 # calculate radiance from that direction
                 
-                radiance = array(list(raytracer.get_radiance(self.view_position, sample_direction)))
+                radiance = raytracer.get_radiance(self.view_position, sample_direction)
                 
                 # and add to image
                 
-                image.add_to_pixel(x, y, radiance)
+                image.add_radiance(x, y, radiance)

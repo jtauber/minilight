@@ -7,7 +7,8 @@
 
 
 from random import choice
-from spatialindex import SpatialIndex
+
+from spatialindex import SpatialIndex, NullSpatialIndex
 from triangle import Triangle
 from vector3f import Vector3f, ZERO, ONE, MAX
 
@@ -29,12 +30,10 @@ class Scene(object):
                 
         print "loaded %d triangles (%d emitters)" % (len(triangles), len(self.emitters))
         
-        self.index = SpatialIndex(eye_position, triangles)
-        
+        self.index = NullSpatialIndex(eye_position, triangles)
         print "built spatial index (%d deep)" % self.index.deepest_level
-        
         self.get_intersection = self.index.get_intersection
-    
+        
     def get_emitter(self):
         if self.emitters:
             emitter = choice(self.emitters)
