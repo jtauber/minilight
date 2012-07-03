@@ -19,7 +19,7 @@ MODEL_FORMAT_ID = "#MiniLight"
 
 
 model_file_pathname = argv[1]
-image_file_pathname = model_file_pathname + ".ppm"
+image_file_pathname = model_file_pathname + ".png"
 model_file = open(model_file_pathname, "r")
 
 if model_file.next().strip() != MODEL_FORMAT_ID:

@@ -8,10 +8,9 @@
 
 from array import array
 from math import log10
+import struct
+import zlib
 
-
-PPM_ID = "P6"
-MINILIGHT_URI = "http://www.hxa7241.org/minilight/"
 
 # how much each channel contributes to luminance
 RGB_LUMINANCE = (0.2126, 0.7152, 0.0722)
@@ -102,8 +101,25 @@ class Image(object):
         """
         
         with open(filename, "wb") as f:
-            f.write("%s\n# %s\n\n%u %u\n255\n" % (
-                PPM_ID, MINILIGHT_URI, self.width, self.height))
-            
-            for c in self.display_pixels(iterations):
-                f.write(chr(min(int((c * 255.0) + 0.5), 255)))
+            f.write(struct.pack("8B", 137, 80, 78, 71, 13, 10, 26, 10))
+            output_chunk(f, "IHDR", struct.pack("!2I5B", self.width, self.height, 8, 2, 0, 0, 0))
+            compressor = zlib.compressobj()
+            data = array("B")
+            pixels = self.display_pixels(iterations)
+            for y in range(self.height):
+                data.append(0)
+                for x in range(self.width):
+                    for channel in range(3):
+                        data.append(min(255, max(0, int(pixels.next() * 255.0 + 0.5))))
+            compressed = compressor.compress(data.tostring())
+            flushed = compressor.flush()
+            output_chunk(f, "IDAT", compressed + flushed)
+            output_chunk(f, "IEND", "")
+
+
+def output_chunk(f, chunk_type, data):
+    f.write(struct.pack("!I", len(data)))
+    f.write(chunk_type)
+    f.write(data)
+    checksum = zlib.crc32(data, zlib.crc32(chunk_type))
+    f.write(struct.pack("!i", checksum))
