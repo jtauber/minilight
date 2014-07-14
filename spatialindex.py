@@ -56,7 +56,8 @@ class SpatialIndex(object):
         self.deepest_level = self.root.deepest_level
 
     def get_intersection(self, ray_origin, ray_direction, last_hit):
-        return self.root.get_intersection(ray_origin, ray_direction, last_hit, ray_origin)
+        return self.root.get_intersection(
+            ray_origin, ray_direction, last_hit, ray_origin)
 
 
 class SpatialNode(object):
@@ -71,7 +72,9 @@ class SpatialNode(object):
         self.bound = bound
         self.deepest_level = level
 
-        self.is_branch = len(item_bounds) > MAX_ITEMS and level < MAX_LEVELS - 1
+        self.is_branch = (
+            len(item_bounds) > MAX_ITEMS and
+            level < MAX_LEVELS - 1)
 
         if self.is_branch:
             q1 = 0
@@ -103,7 +106,8 @@ class SpatialNode(object):
                     else:
                         next_level = level + 1
 
-                    self.children[sub_cell] = SpatialNode(sub_bound, sub_item_bounds, next_level)
+                    self.children[sub_cell] = SpatialNode(
+                        sub_bound, sub_item_bounds, next_level)
                     if self.children[sub_cell].deepest_level > self.deepest_level:
                         self.deepest_level = self.children[sub_cell].deepest_level
 
@@ -131,7 +135,9 @@ class SpatialNode(object):
 
             while True:
                 if self.children[sub_cell]:
-                    hit_object, hit_position = self.children[sub_cell].get_intersection(ray_origin, ray_direction, last_hit, cell_position)
+                    hit_object, hit_position = \
+                        self.children[sub_cell].get_intersection(
+                            ray_origin, ray_direction, last_hit, cell_position)
 
                     if hit_object:
                         break

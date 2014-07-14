@@ -13,7 +13,8 @@ class Vector3f(object):
 
     def __init__(self, *args):
         if len(args) == 1 and isinstance(type(args[0]), str):
-            self.x, self.y, self.z = map(float, args[0].lstrip(" (").rstrip(") ").split())
+            self.x, self.y, self.z = map(
+                float, args[0].lstrip(" (").rstrip(") ").split())
         elif type(args[0]) == Vector3f:
             self.x, self.y, self.z = args[0].x, args[0].y, args[0].z
         else:
@@ -47,7 +48,8 @@ class Vector3f(object):
 
     def __mul__(self, other):
         if type(other) == Vector3f:
-            return Vector3f(self.x * other.x, self.y * other.y, self.z * other.z)
+            return Vector3f(
+                self.x * other.x, self.y * other.y, self.z * other.z)
         else:
             return Vector3f(self.x * other, self.y * other, self.z * other)
 
@@ -60,7 +62,10 @@ class Vector3f(object):
     def unitize(self):
         length = sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
         one_over_length = 1.0 / length if length != 0.0 else 0.0
-        return Vector3f(self.x * one_over_length, self.y * one_over_length, self.z * one_over_length)
+        return Vector3f(
+            self.x * one_over_length,
+            self.y * one_over_length,
+            self.z * one_over_length)
 
     def cross(self, other):
         return Vector3f((self.y * other.z) - (self.z * other.y),
@@ -76,4 +81,3 @@ class Vector3f(object):
 ZERO = Vector3f(0.0)
 ONE = Vector3f(1.0)
 MAX = Vector3f(float(2 ** 1024 - 2 ** 971))
-##ALMOST_ONE?

@@ -94,7 +94,10 @@ class Triangle(object):
         qvy = tvz * e1x - tvx * e1z
         qvz = tvx * e1y - tvy * e1x
 
-        v = (ray_direction.x * qvx + ray_direction.y * qvy + ray_direction.z * qvz) * inv_det
+        v = (
+            ray_direction.x * qvx +
+            ray_direction.y * qvy +
+            ray_direction.z * qvz) * inv_det
 
         if v < 0.0 or u + v > 1.0:
             return None

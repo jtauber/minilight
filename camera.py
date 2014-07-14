@@ -54,7 +54,7 @@ class Camera(object):
         for y in range(image.height):
             for x in range(image.width):
 
-                ## convert x, y into sample_direction
+                # convert x, y into sample_direction
 
                 x_coefficient = ((x + random()) * 2.0 / image.width) - 1.0
                 y_coefficient = ((y + random()) * 2.0 / image.height) - 1.0
@@ -64,7 +64,8 @@ class Camera(object):
 
                 # calculate radiance from that direction
 
-                radiance = raytracer.get_radiance(self.view_position, sample_direction)
+                radiance = raytracer.get_radiance(
+                    self.view_position, sample_direction)
 
                 # and add to image
 

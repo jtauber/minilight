@@ -59,7 +59,8 @@ class Image(object):
         calculate the linear tone-mapping scalefactor for this image assuming
         the given number of iterations.
         """
-        ## calculate the log-mean luminance of the image
+
+        # calculate the log-mean luminance of the image
 
         sum_of_logs = 0.0
 
@@ -74,12 +75,15 @@ class Image(object):
 
         log_mean_luminance = 10.0 ** (sum_of_logs / (self.height * self.width))
 
-        ## calculate the scalefactor for linear tone-mapping
+        # calculate the scalefactor for linear tone-mapping
 
-        # formula from Ward "A Contrast-Based Scalefactor for Luminance Display"
+        # formula from
+        # Ward "A Contrast-Based Scalefactor for Luminance Display"
 
         scalefactor = (
-            (SCALEFACTOR_NUMERATOR / (1.219 + log_mean_luminance ** 0.4)) ** 2.5
+            (SCALEFACTOR_NUMERATOR / (
+                1.219 + log_mean_luminance ** 0.4
+            )) ** 2.5
         ) / DISPLAY_LUMINANCE_MAX
 
         return scalefactor
@@ -102,7 +106,9 @@ class Image(object):
 
         with open(filename, "wb") as f:
             f.write(struct.pack("8B", 137, 80, 78, 71, 13, 10, 26, 10))
-            output_chunk(f, "IHDR", struct.pack("!2I5B", self.width, self.height, 8, 2, 0, 0, 0))
+            output_chunk(
+                f, "IHDR", struct.pack(
+                    "!2I5B", self.width, self.height, 8, 2, 0, 0, 0))
             compressor = zlib.compressobj()
             data = array("B")
             pixels = self.display_pixels(iterations)
@@ -110,7 +116,8 @@ class Image(object):
                 data.append(0)
                 for x in range(self.width):
                     for channel in range(3):
-                        data.append(min(255, max(0, int(pixels.next() * 255.0 + 0.5))))
+                        data.append(
+                            min(255, max(0, int(pixels.next() * 255.0 + 0.5))))
             compressed = compressor.compress(data.tostring())
             flushed = compressor.flush()
             output_chunk(f, "IDAT", compressed + flushed)

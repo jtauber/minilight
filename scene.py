@@ -28,7 +28,8 @@ class Scene(object):
             if not triangle.emitivity.is_zero() and triangle.area > 0.0:
                 self.emitters.append(triangle)
 
-        print "loaded %d triangles (%d emitters)" % (len(triangles), len(self.emitters))
+        print "loaded %d triangles (%d emitters)" % (
+            len(triangles), len(self.emitters))
 
         self.index = NullSpatialIndex(eye_position, triangles)
         print "built spatial index (%d deep)" % self.index.deepest_level

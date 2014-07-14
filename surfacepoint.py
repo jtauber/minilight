@@ -42,7 +42,9 @@ class SurfacePoint(object):
         if (in_dot < 0.0) ^ (out_dot < 0.0):
             return ZERO
         else:
-            return in_radiance * self.triangle.reflectivity * (abs(in_dot) / pi)
+            return (
+                in_radiance * self.triangle.reflectivity *
+                (abs(in_dot) / pi))
 
     def get_next_direction(self, in_direction):
 
@@ -63,7 +65,10 @@ class SurfacePoint(object):
             if normal.dot(in_direction) < 0.0:
                 normal = -normal
 
-            out_direction = (tangent * x) + (normal.cross(tangent) * y) + (normal * z)
+            out_direction = (
+                (tangent * x) +
+                (normal.cross(tangent) * y) +
+                (normal * z))
 
             return out_direction, color
         else:
