@@ -12,7 +12,7 @@ from math import sqrt
 class Vector3f(object):
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(type(args[0]), str):
+        if len(args) == 1 and isinstance(args[0], basestring):
             self.x, self.y, self.z = map(
                 float, args[0].lstrip(" (").rstrip(") ").split())
         elif type(args[0]) == Vector3f:
