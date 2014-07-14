@@ -31,14 +31,17 @@ class Camera(object):
         if self.view_direction.is_zero():
             self.view_direction = Vector3f(0.0, 0.0, 1.0)
 
-        self.view_angle = min(max(MIN_ANGLE, float(angle)), MAX_ANGLE) * (pi / 180.0)
+        self.view_angle = min(
+            max(MIN_ANGLE, float(angle)), MAX_ANGLE) * (pi / 180.0)
 
         # calculate right and up
 
-        self.right = Vector3f(0.0, 1.0, 0.0).cross(self.view_direction).unitize()
+        self.right = Vector3f(0.0, 1.0, 0.0).cross(
+            self.view_direction).unitize()
 
         if self.right.is_zero():
-            self.up = Vector3f(0.0, 0.0, 1.0 if self.view_direction.y else -1.0)
+            self.up = Vector3f(
+                0.0, 0.0, 1.0 if self.view_direction.y else -1.0)
             self.right = self.up.cross(self.view_direction).unitize()
         else:
             self.up = self.view_direction.cross(self.right).unitize()
